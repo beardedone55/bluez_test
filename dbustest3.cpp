@@ -196,16 +196,12 @@ void stop_discovery()
     
 }
 
-void
-bus_acquired(const Glib::RefPtr<Gio::DBus::Connection> & connection,
-             const Glib::ustring & name)
+void init (Glib::RefPtr<Gio::DBus::ObjectManagerClient> &manager)
 {
-    connection->register_object("/org/obd/serial", 
+
+    manager->get_connection()->register_object("/org/obd/serial", 
                                   profile_node->lookup_interface(),
                                   profile_vtable);
-    std::cout << name << " registered." << std::endl;
-    auto manager = Gio::DBus::ObjectManagerClient::create_sync(connection,
-                   "org.bluez","/");
 
     showExistingObjects(manager);
 
@@ -243,9 +239,9 @@ int main()
     Gio::init();
     profile_node = Gio::DBus::NodeInfo::create_for_xml(Profile1_definition);
 
-    Gio::DBus::own_name(Gio::DBus::BUS_TYPE_SYSTEM, "org.obd", sigc::ptr_fun(&bus_acquired),
-                        sigc::ptr_fun(&name_acquired), sigc::ptr_fun(&name_lost));
-
+    auto manager = Gio::DBus::ObjectManagerClient::create_for_bus_sync(Gio::DBus::BUS_TYPE_SYSTEM,
+                   "org.bluez","/");
+    init(manager);
 
     auto loop = Glib::MainLoop::create();
 
