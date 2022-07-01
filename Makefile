@@ -1,10 +1,10 @@
 ifdef GTK4
 DBUS_CPPFLAGS = `pkg-config --cflags giomm-2.66` -DGTK4 -g -O0 -std=c++17
-DBUS_LDFLAGS = `pkg-config --libs giomm-2.66`
+DBUS_LDFLAGS = `pkg-config --libs giomm-2.66` -lpthread
 export PKG_CONFIG_PATH := /usr/local/lib/pkgconfig
 else
 DBUS_CPPFLAGS = `pkg-config --cflags giomm-2.4` -g -O0 -std=c++17
-DBUS_LDFLAGS = `pkg-config --libs giomm-2.4`
+DBUS_LDFLAGS = `pkg-config --libs giomm-2.4` -lpthread
 endif
 
 default: dbustest dbustest2
